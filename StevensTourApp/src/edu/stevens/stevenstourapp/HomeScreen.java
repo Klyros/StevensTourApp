@@ -1,6 +1,7 @@
 package edu.stevens.stevenstourapp;
 
 import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
 import android.graphics.*;
@@ -14,7 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 
-public class HomeScreen extends Activity {
+public class HomeScreen extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
