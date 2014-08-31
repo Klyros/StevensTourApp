@@ -1,0 +1,82 @@
+package edu.stevens.stevenstourapp;
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.*;
+import android.app.Activity;
+import android.content.*;
+import android.location.*;
+import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class TourActivity extends FragmentActivity{
+	// Google Map
+	private GoogleMap googleMap;
+	private TextView latitude;
+	private TextView longitude;
+	private LocationManager locationManager;
+	private Criteria criteria;
+	private String provider;
+	private MyLocationListener mylistener;
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		latitude = (TextView) findViewById(R.id.lat);
+		longitude = (TextView) findViewById(R.id.lon);
+		super.onCreate(savedInstanceState);
+			setContentView(R.layout.tourscreen);
+			GoogleMap map;
+			map = ((SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.mapView)).getMap();
+			
+			criteria = new Criteria();
+			criteria.setAccuracy(Criteria.ACCURACY_FINE);
+			// Get the location manager
+			locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            
+			criteria.setCostAllowed(false);
+			// get the best provider depending on the criteria
+			provider = locationManager.getBestProvider(criteria, false);
+         
+			// the last known location of this provider
+			Location location = locationManager.getLastKnownLocation(provider);
+
+			mylistener = new MyLocationListener();
+	     
+	        if (location != null) {
+	        	mylistener.onLocationChanged(location);
+	        } else {
+	        	// leads to the settings because there is no last known location
+	        	Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+	        	startActivity(intent);
+	        }
+	        // location updates: at least 1 meter and 200millsecs change
+	        locationManager.requestLocationUpdates(provider, 200, 1, mylistener);
+			
+            Button btnHome = (Button) findViewById(R.id.btnHome);
+            btnHome.setOnClickListener(new View.OnClickListener() {
+    			 
+            public void onClick(View arg0) {
+                    //Closing SecondScreen Activity
+                    finish();
+                }
+            });
+            
+    }
+	private class MyLocationListener implements LocationListener {
+     
+	   @Override
+	   public void onLocationChanged(Location location) {
+       // Initialize the location fields
+       latitude.setText("Latitude: "+String.valueOf(location.getLatitude()));
+       longitude.setText("Longitude: "+String.valueOf(location.getLongitude()));
+	               
+       Toast.makeText(TourActivity.this,"Location changed!",
+          Toast.LENGTH_SHORT).show();
+	   }
+	}
+
+}
